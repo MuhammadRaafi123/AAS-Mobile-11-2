@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   ActivityIndicator,
   Alert,
@@ -77,23 +78,32 @@ type CommentItem = {
   user_name?: string;
 };
 
-const IMAGE_BASE_URL = "http://10.2.8.106:5000";
+const IMAGE_BASE_URL = "http://192.168.1.3:5000";
 
 const reportSteps = [
   {
-    icon: "▣",
+    num: "01",
+    icon: "create-outline" as const,
     title: "Buat Laporan",
     description: "Sampaikan aspirasi atau keluhan melalui formulir digital.",
+    color: "#0EA5E9",
+    bgColor: "#F0F9FF",
   },
   {
-    icon: "◎",
+    num: "02",
+    icon: "shield-checkmark-outline" as const,
     title: "Verifikasi",
     description: "Laporan akan ditinjau dan diteruskan ke pihak terkait.",
+    color: "#8B5CF6",
+    bgColor: "#F5F3FF",
   },
   {
-    icon: "✓",
+    num: "03",
+    icon: "analytics-outline" as const,
     title: "Pantau Hasil",
     description: "Ikuti perkembangan laporan sampai selesai ditindaklanjuti.",
+    color: "#10B981",
+    bgColor: "#F0FDF4",
   },
 ];
 
@@ -317,8 +327,8 @@ export default function DashboardScreen({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor="#e5e7eb"
-            colors={["#2563eb"]}
+            tintColor="#0EA5E9"
+            colors={["#0EA5E9"]}
           />
         }
       >
@@ -424,23 +434,40 @@ export default function DashboardScreen({
         </View>
 
         <View style={styles.stepsSection}>
-          <Text style={styles.stepsTitle}>
-            Langkah Mudah <Text style={styles.stepsTitleBlue}>Melapor</Text>
-          </Text>
+          <View style={styles.stepsSectionHeader}>
+            <Text style={styles.stepsTitle}>
+              Langkah Mudah <Text style={styles.stepsTitleBlue}>Melapor</Text>
+            </Text>
 
-          <Text style={styles.stepsSubtitle}>
-            Proses pelaporan yang cepat, transparan, dan mudah dipahami.
-          </Text>
+            <Text style={styles.stepsSubtitle}>
+              Proses pelaporan yang cepat, transparan, dan mudah dipahami.
+            </Text>
+          </View>
 
           <View style={styles.stepsList}>
-            {reportSteps.map((step) => (
-              <View key={step.title} style={styles.stepCard}>
-                <View style={styles.stepIconBox}>
-                  <Text style={styles.stepIcon}>{step.icon}</Text>
+            {reportSteps.map((step, index) => (
+              <View key={step.title} style={styles.stepRow}>
+                {/* Left side: number + connector line */}
+                <View style={styles.stepLeftCol}>
+                  <View style={[styles.stepNumCircle, { backgroundColor: step.color }]}>
+                    <Text style={styles.stepNumText}>{step.num}</Text>
+                  </View>
+                  {index < reportSteps.length - 1 && (
+                    <View style={[styles.stepConnector, { backgroundColor: step.color + "30" }]} />
+                  )}
                 </View>
 
-                <Text style={styles.stepTitle}>{step.title}</Text>
-                <Text style={styles.stepDescription}>{step.description}</Text>
+                {/* Right side: card content */}
+                <View style={[styles.stepCard, { backgroundColor: step.bgColor }]}>
+                  <View style={[styles.stepIconBox, { backgroundColor: step.color + "18" }]}>
+                    <Ionicons name={step.icon} size={22} color={step.color} />
+                  </View>
+
+                  <View style={styles.stepTextBox}>
+                    <Text style={styles.stepTitle}>{step.title}</Text>
+                    <Text style={styles.stepDescription}>{step.description}</Text>
+                  </View>
+                </View>
               </View>
             ))}
           </View>
@@ -508,7 +535,7 @@ export default function DashboardScreen({
 
         {loading ? (
           <View style={styles.loadingBox}>
-            <ActivityIndicator color="#2563eb" />
+            <ActivityIndicator color="#0EA5E9" size="large" />
             <Text style={styles.loadingText}>Memuat data laporan...</Text>
           </View>
         ) : latestLaporan.length === 0 ? (
@@ -606,7 +633,7 @@ export default function DashboardScreen({
 
                   {commentsLoading ? (
                     <View style={styles.commentLoadingBox}>
-                      <ActivityIndicator color="#2563eb" />
+                      <ActivityIndicator color="#0EA5E9" />
                       <Text style={styles.commentLoadingText}>
                         Memuat komentar...
                       </Text>
@@ -680,23 +707,22 @@ export default function DashboardScreen({
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: "#0b1120",
+    backgroundColor: "#F8FAFC",
   },
   content: {
-    paddingHorizontal: 20,
-    paddingTop: 8,
+    paddingHorizontal: 24,
+    paddingTop: 16,
     paddingBottom: 120,
   },
   headerCard: {
-    backgroundColor: "#111827",
-    borderWidth: 1,
-    borderColor: "#1f2937",
+    backgroundColor: "#FFFFFF",
     borderRadius: 24,
-    padding: 20,
-    marginBottom: 14,
-    shadowColor: "#000000",
-    shadowOpacity: 0.18,
-    shadowRadius: 14,
+    padding: 24,
+    marginBottom: 20,
+    shadowColor: "#94A3B8",
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 },
     elevation: 5,
   },
   headerTop: {
@@ -709,580 +735,672 @@ const styles = StyleSheet.create({
     paddingRight: 14,
   },
   greeting: {
-    color: "#9ca3af",
-    fontSize: 13,
+    color: "#64748B",
+    fontSize: 14,
     fontWeight: "700",
   },
   name: {
-    color: "#f9fafb",
-    fontSize: 22,
+    color: "#0F172A",
+    fontSize: 24,
     fontWeight: "900",
     marginTop: 4,
+    letterSpacing: -0.5,
   },
   roleText: {
-    color: "#60a5fa",
-    fontSize: 12,
+    color: "#0EA5E9",
+    fontSize: 13,
     fontWeight: "800",
     marginTop: 6,
   },
   avatar: {
-    width: 52,
-    height: 52,
-    borderRadius: 16,
-    backgroundColor: "#1e3a8a",
+    width: 56,
+    height: 56,
+    borderRadius: 18,
+    backgroundColor: "#E0F2FE",
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#BAE6FD",
   },
   avatarText: {
-    color: "#ffffff",
-    fontSize: 20,
+    color: "#0284C7",
+    fontSize: 22,
     fontWeight: "900",
   },
   divider: {
     height: 1,
-    backgroundColor: "#1f2937",
-    marginVertical: 18,
+    backgroundColor: "#F1F5F9",
+    marginVertical: 20,
   },
   headerTitle: {
-    color: "#f9fafb",
-    fontSize: 20,
+    color: "#0F172A",
+    fontSize: 18,
     fontWeight: "900",
   },
   headerSubtitle: {
-    color: "#9ca3af",
-    fontSize: 13,
-    lineHeight: 20,
+    color: "#64748B",
+    fontSize: 14,
+    lineHeight: 22,
     marginTop: 8,
   },
   actionRow: {
     flexDirection: "row",
-    gap: 10,
-    marginTop: 20,
+    gap: 12,
+    marginTop: 24,
   },
   primaryButton: {
     flex: 1,
-    height: 48,
-    borderRadius: 14,
-    backgroundColor: "#2563eb",
+    height: 50,
+    borderRadius: 16,
+    backgroundColor: "#0EA5E9",
     alignItems: "center",
     justifyContent: "center",
+    shadowColor: "#0EA5E9",
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 6,
   },
   primaryButtonText: {
-    color: "#ffffff",
-    fontSize: 13,
-    fontWeight: "900",
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "800",
   },
   secondaryButton: {
     flex: 1,
-    height: 48,
-    borderRadius: 14,
-    backgroundColor: "#1f2937",
+    height: 50,
+    borderRadius: 16,
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#374151",
+    borderColor: "#E2E8F0",
     alignItems: "center",
     justifyContent: "center",
   },
   secondaryButtonText: {
-    color: "#e5e7eb",
-    fontSize: 13,
-    fontWeight: "900",
+    color: "#0F172A",
+    fontSize: 14,
+    fontWeight: "800",
   },
   infoCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#0f172a",
+    backgroundColor: "#F0FDF4",
     borderWidth: 1,
-    borderColor: "#1e293b",
+    borderColor: "#BBF7D0",
     borderRadius: 18,
-    padding: 14,
-    marginBottom: 22,
+    padding: 16,
+    marginBottom: 26,
   },
   infoDot: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#22c55e",
-    marginRight: 12,
+    backgroundColor: "#22C55E",
+    marginRight: 14,
   },
   infoContent: {
     flex: 1,
   },
   infoTitle: {
-    color: "#f9fafb",
-    fontSize: 13,
-    fontWeight: "900",
+    color: "#166534",
+    fontSize: 14,
+    fontWeight: "800",
   },
   infoText: {
-    color: "#94a3b8",
-    fontSize: 12,
+    color: "#15803D",
+    fontSize: 13,
     lineHeight: 18,
-    marginTop: 3,
+    marginTop: 4,
   },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "space-between",
-    marginBottom: 12,
+    marginBottom: 16,
     gap: 12,
   },
   sectionTitle: {
-    color: "#f9fafb",
-    fontSize: 18,
+    color: "#0F172A",
+    fontSize: 20,
     fontWeight: "900",
   },
   statsGrid: {
     flexDirection: "row",
-    gap: 10,
-    marginBottom: 10,
+    gap: 12,
+    marginBottom: 12,
   },
   statMainColumn: {
     flex: 1.15,
-    gap: 10,
+    gap: 12,
   },
   statCardTotalSmall: {
     flex: 1,
-    minHeight: 70,
-    backgroundColor: "#111827",
+    minHeight: 80,
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#1f2937",
+    borderColor: "#E2E8F0",
     borderRadius: 20,
-    padding: 14,
+    padding: 16,
     justifyContent: "center",
+    shadowColor: "#94A3B8",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
   statCardRejectedSmall: {
     flex: 1,
-    minHeight: 70,
-    backgroundColor: "#111827",
+    minHeight: 80,
+    backgroundColor: "#FEF2F2",
     borderWidth: 1,
-    borderColor: "#7f1d1d",
+    borderColor: "#FECACA",
     borderRadius: 20,
-    padding: 14,
+    padding: 16,
     justifyContent: "center",
   },
   statSide: {
     flex: 1,
-    gap: 10,
+    gap: 12,
   },
   statCard: {
     flex: 1,
-    backgroundColor: "#111827",
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#1f2937",
+    borderColor: "#E2E8F0",
     borderRadius: 20,
     padding: 16,
     justifyContent: "center",
+    shadowColor: "#94A3B8",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
   statFullRow: {
-    marginBottom: 26,
+    marginBottom: 30,
   },
   statCardFull: {
-    backgroundColor: "#111827",
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#1f2937",
+    borderColor: "#E2E8F0",
     borderRadius: 20,
-    padding: 16,
+    padding: 20,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    shadowColor: "#94A3B8",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
   statLabel: {
-    color: "#9ca3af",
+    color: "#64748B",
     fontSize: 13,
     fontWeight: "800",
   },
   statValueTotalSmall: {
-    color: "#f9fafb",
-    fontSize: 28,
+    color: "#0F172A",
+    fontSize: 32,
     fontWeight: "900",
     marginTop: 4,
   },
   statValue: {
-    color: "#f9fafb",
+    color: "#0F172A",
     fontSize: 28,
     fontWeight: "900",
   },
   statValueDone: {
-    color: "#22c55e",
-    fontSize: 30,
+    color: "#10B981",
+    fontSize: 36,
     fontWeight: "900",
   },
   statValueRejected: {
-    color: "#ef4444",
+    color: "#EF4444",
     fontSize: 28,
     fontWeight: "900",
   },
   statLabelSmall: {
-    color: "#e5e7eb",
-    fontSize: 13,
-    fontWeight: "900",
-    marginTop: 4,
+    color: "#475569",
+    fontSize: 14,
+    fontWeight: "800",
+    marginTop: 6,
   },
   statHint: {
-    color: "#6b7280",
+    color: "#94A3B8",
     fontSize: 12,
     lineHeight: 18,
     marginTop: 4,
   },
   stepsSection: {
-    marginBottom: 26,
+    marginBottom: 30,
+  },
+  stepsSectionHeader: {
+    backgroundColor: "#FFFFFF",
+    padding: 22,
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    marginBottom: 18,
+    shadowColor: "#94A3B8",
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
   },
   stepsTitle: {
-    color: "#f9fafb",
+    color: "#0F172A",
     fontSize: 22,
     fontWeight: "900",
     letterSpacing: 0.2,
   },
   stepsTitleBlue: {
-    color: "#60a5fa",
+    color: "#0EA5E9",
   },
   stepsSubtitle: {
-    color: "#94a3b8",
-    fontSize: 13,
-    lineHeight: 20,
-    marginTop: 7,
-    marginBottom: 14,
+    color: "#64748B",
+    fontSize: 14,
+    lineHeight: 22,
+    marginTop: 8,
   },
   stepsList: {
-    gap: 12,
+    gap: 0,
   },
-  stepCard: {
-    backgroundColor: "#111827",
-    borderWidth: 1,
-    borderColor: "#1f2937",
-    borderRadius: 22,
-    padding: 18,
+  stepRow: {
+    flexDirection: "row",
+    alignItems: "stretch",
   },
-  stepIconBox: {
-    width: 48,
-    height: 48,
+  stepLeftCol: {
+    width: 40,
+    alignItems: "center",
+  },
+  stepNumCircle: {
+    width: 32,
+    height: 32,
     borderRadius: 16,
-    backgroundColor: "#172554",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 18,
+    marginTop: 14,
   },
-  stepIcon: {
-    color: "#60a5fa",
-    fontSize: 22,
+  stepNumText: {
+    color: "#FFFFFF",
+    fontSize: 12,
     fontWeight: "900",
+  },
+  stepConnector: {
+    width: 3,
+    flex: 1,
+    marginVertical: 4,
+    borderRadius: 2,
+  },
+  stepCard: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    marginLeft: 12,
+    marginBottom: 10,
+    shadowColor: "#94A3B8",
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 1,
+  },
+  stepIconBox: {
+    width: 46,
+    height: 46,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 14,
+  },
+  stepTextBox: {
+    flex: 1,
   },
   stepTitle: {
-    color: "#f9fafb",
-    fontSize: 17,
-    fontWeight: "900",
-    marginBottom: 10,
+    color: "#0F172A",
+    fontSize: 15,
+    fontWeight: "800",
+    marginBottom: 3,
   },
   stepDescription: {
-    color: "#cbd5e1",
+    color: "#64748B",
     fontSize: 13,
-    lineHeight: 22,
+    lineHeight: 19,
   },
   gallerySection: {
-    marginBottom: 26,
+    marginBottom: 30,
   },
   gallerySubtitle: {
-    color: "#94a3b8",
-    fontSize: 12,
+    color: "#64748B",
+    fontSize: 13,
     lineHeight: 18,
     marginTop: 4,
   },
   galleryGrid: {
-  flexDirection: "row",
-  flexWrap: "wrap",
-  justifyContent: "space-between",
-  rowGap: 12,
-},
-
-galleryCard: {
-  width: "48%",
-  height: 165,
-  borderRadius: 18,
-  overflow: "hidden",
-  backgroundColor: "#111827",
-  borderWidth: 1,
-  borderColor: "#1f2937",
-},
-
-galleryImage: {
-  width: "100%",
-  height: "100%",
-},
-
-galleryOverlay: {
-  position: "absolute",
-  left: 0,
-  right: 0,
-  bottom: 0,
-  padding: 10,
-  backgroundColor: "rgba(2, 6, 23, 0.78)",
-},
-
-galleryTitle: {
-  color: "#f9fafb",
-  fontSize: 12,
-  fontWeight: "900",
-},
-
-galleryStatus: {
-  color: "#93c5fd",
-  fontSize: 11,
-  fontWeight: "800",
-  marginTop: 3,
-}, 
-  galleryEmpty: {
-    backgroundColor: "#111827",
-    borderWidth: 1,
-    borderColor: "#1f2937",
-    borderRadius: 20,
-    padding: 18,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    rowGap: 14,
   },
-  galleryEmptyTitle: {
-    color: "#f9fafb",
-    fontSize: 15,
+  galleryCard: {
+    width: "48%",
+    height: 180,
+    borderRadius: 20,
+    overflow: "hidden",
+    backgroundColor: "#F1F5F9",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    shadowColor: "#94A3B8",
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
+  },
+  galleryImage: {
+    width: "100%",
+    height: "100%",
+  },
+  galleryOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    padding: 12,
+    backgroundColor: "rgba(15, 23, 42, 0.75)",
+  },
+  galleryTitle: {
+    color: "#FFFFFF",
+    fontSize: 13,
     fontWeight: "900",
   },
+  galleryStatus: {
+    color: "#BAE6FD",
+    fontSize: 11,
+    fontWeight: "800",
+    marginTop: 4,
+  },
+  galleryEmpty: {
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    borderRadius: 20,
+    padding: 20,
+  },
+  galleryEmptyTitle: {
+    color: "#0F172A",
+    fontSize: 16,
+    fontWeight: "800",
+  },
   galleryEmptyText: {
-    color: "#94a3b8",
-    fontSize: 12,
-    lineHeight: 19,
+    color: "#64748B",
+    fontSize: 13,
+    lineHeight: 20,
     marginTop: 6,
   },
   seeAllText: {
-    color: "#60a5fa",
-    fontSize: 12,
-    fontWeight: "900",
+    color: "#0EA5E9",
+    fontSize: 14,
+    fontWeight: "800",
     marginTop: 4,
   },
   latestList: {
-    gap: 10,
+    gap: 14,
   },
   loadingBox: {
-    backgroundColor: "#111827",
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
-    padding: 22,
+    padding: 24,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#1f2937",
+    borderColor: "#E2E8F0",
   },
   loadingText: {
-    color: "#9ca3af",
-    marginTop: 10,
-    fontSize: 13,
+    color: "#64748B",
+    marginTop: 12,
+    fontSize: 14,
+    fontWeight: "600",
   },
   emptyBox: {
-    backgroundColor: "#111827",
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
-    padding: 20,
+    padding: 24,
     borderWidth: 1,
-    borderColor: "#1f2937",
+    borderColor: "#E2E8F0",
+    alignItems: "center",
   },
   emptyTitle: {
-    color: "#f9fafb",
-    fontSize: 16,
+    color: "#0F172A",
+    fontSize: 18,
     fontWeight: "900",
   },
   emptyText: {
-    color: "#9ca3af",
-    fontSize: 13,
-    lineHeight: 20,
+    color: "#64748B",
+    fontSize: 14,
+    lineHeight: 22,
     marginTop: 8,
+    textAlign: "center",
   },
   emptyButton: {
-    height: 46,
-    borderRadius: 14,
-    backgroundColor: "#2563eb",
+    height: 50,
+    borderRadius: 16,
+    backgroundColor: "#0EA5E9",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 18,
+    marginTop: 20,
+    paddingHorizontal: 24,
+    shadowColor: "#0EA5E9",
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
   },
   emptyButtonText: {
-    color: "#ffffff",
-    fontSize: 13,
-    fontWeight: "900",
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "800",
   },
   modalBackdrop: {
     flex: 1,
-    backgroundColor: "rgba(2, 6, 23, 0.82)",
-    paddingHorizontal: 18,
+    backgroundColor: "rgba(15, 23, 42, 0.6)",
+    paddingHorizontal: 20,
     justifyContent: "center",
   },
   modalCard: {
-    backgroundColor: "#111827",
-    borderWidth: 1,
-    borderColor: "#1f2937",
+    backgroundColor: "#FFFFFF",
     borderRadius: 24,
-    padding: 16,
+    padding: 20,
     maxHeight: "88%",
+    shadowColor: "#000000",
+    shadowOpacity: 0.25,
+    shadowRadius: 30,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 10,
   },
   modalScrollContent: {
-    paddingBottom: 4,
+    paddingBottom: 20,
   },
   modalHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 14,
+    marginBottom: 16,
   },
   modalTitle: {
-    color: "#f9fafb",
-    fontSize: 17,
+    color: "#0F172A",
+    fontSize: 18,
     fontWeight: "900",
   },
   closeButton: {
-    width: 34,
-    height: 34,
-    borderRadius: 12,
-    backgroundColor: "#1f2937",
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#F1F5F9",
     alignItems: "center",
     justifyContent: "center",
   },
   closeText: {
-    color: "#f9fafb",
+    color: "#475569",
     fontSize: 24,
     lineHeight: 26,
     fontWeight: "700",
   },
   modalImage: {
     width: "100%",
-    height: 210,
-    borderRadius: 18,
-    backgroundColor: "#0f172a",
+    height: 220,
+    borderRadius: 20,
+    backgroundColor: "#F1F5F9",
   },
   modalInfo: {
-    marginTop: 14,
+    marginTop: 16,
   },
   modalTitleRow: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 10,
+    gap: 12,
   },
   modalReportTitle: {
     flex: 1,
-    color: "#f9fafb",
-    fontSize: 17,
+    color: "#0F172A",
+    fontSize: 18,
     fontWeight: "900",
-    lineHeight: 23,
+    lineHeight: 24,
   },
   modalStatusBadge: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 999,
-    backgroundColor: "#172554",
+    backgroundColor: "#F0F9FF",
     borderWidth: 1,
-    borderColor: "#1d4ed8",
+    borderColor: "#BAE6FD",
   },
   modalStatusText: {
-    color: "#bfdbfe",
-    fontSize: 11,
-    fontWeight: "900",
+    color: "#0284C7",
+    fontSize: 12,
+    fontWeight: "800",
   },
   modalDescription: {
-    color: "#cbd5e1",
-    fontSize: 13,
-    lineHeight: 21,
-    marginTop: 10,
+    color: "#475569",
+    fontSize: 14,
+    lineHeight: 22,
+    marginTop: 12,
   },
   commentListBox: {
-    marginTop: 18,
-    backgroundColor: "#0f172a",
+    marginTop: 24,
+    backgroundColor: "#F8FAFC",
     borderWidth: 1,
-    borderColor: "#1e293b",
-    borderRadius: 18,
-    padding: 14,
+    borderColor: "#E2E8F0",
+    borderRadius: 20,
+    padding: 16,
   },
   commentListHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 10,
+    marginBottom: 14,
   },
   commentListTitle: {
-    color: "#f9fafb",
-    fontSize: 14,
+    color: "#0F172A",
+    fontSize: 15,
     fontWeight: "900",
   },
   refreshCommentText: {
-    color: "#60a5fa",
-    fontSize: 12,
-    fontWeight: "900",
+    color: "#0EA5E9",
+    fontSize: 13,
+    fontWeight: "800",
   },
   commentLoadingBox: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 10,
   },
   commentLoadingText: {
-    color: "#94a3b8",
-    fontSize: 12,
+    color: "#64748B",
+    fontSize: 13,
     fontWeight: "700",
   },
   commentEmptyText: {
-    color: "#94a3b8",
-    fontSize: 12,
-    lineHeight: 18,
+    color: "#64748B",
+    fontSize: 13,
+    lineHeight: 20,
   },
   commentList: {
-    gap: 10,
+    gap: 12,
   },
   commentItem: {
-    backgroundColor: "#111827",
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "#1f2937",
-    borderRadius: 14,
-    padding: 12,
+    borderColor: "#E2E8F0",
+    borderRadius: 16,
+    padding: 14,
+    shadowColor: "#94A3B8",
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 1,
   },
   commentUser: {
-    color: "#93c5fd",
-    fontSize: 12,
-    fontWeight: "900",
-    marginBottom: 5,
+    color: "#0EA5E9",
+    fontSize: 13,
+    fontWeight: "800",
+    marginBottom: 6,
   },
   commentText: {
-    color: "#e5e7eb",
-    fontSize: 13,
-    lineHeight: 19,
+    color: "#334155",
+    fontSize: 14,
+    lineHeight: 20,
   },
   commentDate: {
-    color: "#64748b",
-    fontSize: 10,
-    fontWeight: "700",
-    marginTop: 7,
+    color: "#94A3B8",
+    fontSize: 11,
+    fontWeight: "600",
+    marginTop: 8,
   },
   commentBox: {
-    marginTop: 18,
+    marginTop: 24,
   },
   commentLabel: {
-    color: "#f9fafb",
-    fontSize: 14,
+    color: "#0F172A",
+    fontSize: 15,
     fontWeight: "900",
-    marginBottom: 9,
+    marginBottom: 10,
   },
   commentInput: {
-    minHeight: 96,
+    minHeight: 100,
     borderRadius: 16,
-    backgroundColor: "#0f172a",
+    backgroundColor: "#F1F5F9",
     borderWidth: 1,
-    borderColor: "#334155",
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    color: "#f9fafb",
-    fontSize: 13,
-    lineHeight: 19,
+    borderColor: "#E2E8F0",
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    color: "#0F172A",
+    fontSize: 14,
+    lineHeight: 20,
   },
   commentButton: {
-    height: 46,
-    borderRadius: 14,
-    backgroundColor: "#2563eb",
+    height: 50,
+    borderRadius: 16,
+    backgroundColor: "#0EA5E9",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 12,
+    marginTop: 14,
+    shadowColor: "#0EA5E9",
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
   },
   commentButtonDisabled: {
     opacity: 0.65,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   commentButtonText: {
-    color: "#ffffff",
-    fontSize: 13,
-    fontWeight: "900",
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "800",
   },
 });

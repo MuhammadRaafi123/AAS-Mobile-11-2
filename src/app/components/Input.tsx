@@ -25,7 +25,7 @@ export default function Input({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#64748b"
+        placeholderTextColor="#94A3B8"
         multiline={multiline}
         secureTextEntry={secureTextEntry}
         style={[styles.input, multiline && styles.textarea]}
@@ -39,24 +39,25 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
-    color: "#e2e8f0",
-    fontSize: 13,
-    fontWeight: "800",
+    color: "#334155",
+    fontSize: 14,
+    fontWeight: "700",
     marginBottom: 8,
+    marginLeft: 4,
   },
   input: {
-    minHeight: 54,
+    minHeight: 56,
     borderRadius: 16,
-    backgroundColor: "rgba(2, 6, 23, 0.75)",
+    backgroundColor: "#F1F5F9",
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.18)",
+    borderColor: "#E2E8F0",
     paddingHorizontal: 16,
-    color: "#f8fafc",
-    fontSize: 14,
+    color: "#0F172A",
+    fontSize: 15,
   },
   textarea: {
     minHeight: 130,
-    paddingTop: 14,
+    paddingTop: 16,
     textAlignVertical: "top",
   },
 });

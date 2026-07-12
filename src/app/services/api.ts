@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "../utils/storage";
 
 const api = axios.create({
-  baseURL: "http://10.2.8.106:5000/api",
+  baseURL: "http://192.168.1.3:5000/api",
   timeout: 15000,
 });
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -12,6 +12,13 @@ import {
   View,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Animated, { 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withSpring, 
+  withTiming, 
+  withDelay 
+} from "react-native-reanimated";
 
 import { register } from "../services/auth.service";
 
@@ -46,6 +53,30 @@ export default function RegisterScreen({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Animations
+  const headerOpacity = useSharedValue(0);
+  const headerTranslateY = useSharedValue(30);
+  const formOpacity = useSharedValue(0);
+  const formTranslateY = useSharedValue(40);
+
+  useEffect(() => {
+    headerOpacity.value = withTiming(1, { duration: 600 });
+    headerTranslateY.value = withSpring(0, { damping: 15, stiffness: 100 });
+
+    formOpacity.value = withDelay(200, withTiming(1, { duration: 600 }));
+    formTranslateY.value = withDelay(200, withSpring(0, { damping: 15, stiffness: 100 }));
+  }, []);
+
+  const headerAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: headerOpacity.value,
+    transform: [{ translateY: headerTranslateY.value }],
+  }));
+
+  const formAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: formOpacity.value,
+    transform: [{ translateY: formTranslateY.value }],
+  }));
 
   const handleRegister = async () => {
     const cleanNama = namaLengkap.trim();
@@ -120,103 +151,100 @@ export default function RegisterScreen({
 
   return (
     <KeyboardAvoidingView
-      style={styles.screen}
+      style={styles.keyboard}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={styles.container}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.topSection}>
-          <View style={styles.brandRow}>
-            <View style={styles.logoBox}>
-              <Text style={styles.logoText}>LK</Text>
-            </View>
+        <View style={styles.bgBlob} />
 
-            <View>
-              <Text style={styles.brandName}>LAPORAN KUH</Text>
-              <Text style={styles.brandCaption}>Pengaduan Masyarakat</Text>
-            </View>
+        <Animated.View style={[styles.header, headerAnimatedStyle]}>
+          <View style={styles.logoBox}>
+            <Ionicons name="person-add" size={34} color="#ffffff" />
           </View>
-
-          <Text style={styles.title}>Buat akun baru</Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>Daftar Baru</Text>
+          </View>
+          <Text style={styles.title}>Buat Akun Anda</Text>
           <Text style={styles.subtitle}>
-            Daftar akun untuk membuat laporan, memantau proses, dan melihat
-            perkembangan pengaduan kamu.
+            Bergabunglah bersama kami untuk menciptakan lingkungan yang lebih transparan.
           </Text>
-        </View>
+        </Animated.View>
 
-        <View style={styles.card}>
-          <View style={styles.formHeader}>
-            <Text style={styles.formTitle}>Daftar LAPORAN KUH</Text>
-            <Text style={styles.formSubtitle}>
-              Lengkapi data akun kamu dengan benar.
-            </Text>
-          </View>
-
+        <Animated.View style={[styles.card, formAnimatedStyle]}>
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Nama Lengkap</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Contoh: Wahid Ahmad"
-              placeholderTextColor="#64748b"
-              value={namaLengkap}
-              onChangeText={setNamaLengkap}
-              autoCapitalize="words"
-            />
+            <View style={styles.inputWrapper}>
+              <Ionicons name="person-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Contoh: Wahid Ahmad"
+                placeholderTextColor="#94a3b8"
+                value={namaLengkap}
+                onChangeText={setNamaLengkap}
+                autoCapitalize="words"
+              />
+            </View>
           </View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="example@gmail.com"
-              placeholderTextColor="#64748b"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
+            <View style={styles.inputWrapper}>
+              <Ionicons name="mail-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="example@gmail.com"
+                placeholderTextColor="#94a3b8"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
+            </View>
           </View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Nomor Telepon</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="08xxxxxxxxxx"
-              placeholderTextColor="#64748b"
-              value={noTelp}
-              onChangeText={setNoTelp}
-              keyboardType="phone-pad"
-            />
+            <View style={styles.inputWrapper}>
+              <Ionicons name="call-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="08xxxxxxxxxx"
+                placeholderTextColor="#94a3b8"
+                value={noTelp}
+                onChangeText={setNoTelp}
+                keyboardType="phone-pad"
+              />
+            </View>
           </View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Password</Text>
-
-            <View style={styles.passwordWrapper}>
+            <View style={styles.inputWrapper}>
+              <Ionicons name="lock-closed-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
               <TextInput
-                style={styles.passwordInput}
+                style={[styles.input, { flex: 1 }]}
                 placeholder="Minimal 6 karakter"
-                placeholderTextColor="#64748b"
+                placeholderTextColor="#94a3b8"
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
                 autoCorrect={false}
               />
-
               <TouchableOpacity
                 style={styles.eyeButton}
-                activeOpacity={0.75}
+                activeOpacity={0.7}
                 onPress={() => setShowPassword((prev) => !prev)}
               >
                 <Ionicons
                   name={showPassword ? "eye-outline" : "eye-off-outline"}
-                  size={21}
-                  color="#38bdf8"
+                  size={20}
+                  color="#64748b"
                 />
               </TouchableOpacity>
             </View>
@@ -224,30 +252,29 @@ export default function RegisterScreen({
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Konfirmasi Password</Text>
-
-            <View style={styles.passwordWrapper}>
+            <View style={styles.inputWrapper}>
+              <Ionicons name="checkmark-circle-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
               <TextInput
-                style={styles.passwordInput}
+                style={[styles.input, { flex: 1 }]}
                 placeholder="Ulangi password"
-                placeholderTextColor="#64748b"
+                placeholderTextColor="#94a3b8"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 secureTextEntry={!showConfirmPassword}
                 autoCapitalize="none"
                 autoCorrect={false}
               />
-
               <TouchableOpacity
                 style={styles.eyeButton}
-                activeOpacity={0.75}
+                activeOpacity={0.7}
                 onPress={() => setShowConfirmPassword((prev) => !prev)}
               >
                 <Ionicons
                   name={
                     showConfirmPassword ? "eye-outline" : "eye-off-outline"
                   }
-                  size={21}
-                  color="#38bdf8"
+                  size={20}
+                  color="#64748b"
                 />
               </TouchableOpacity>
             </View>
@@ -255,7 +282,7 @@ export default function RegisterScreen({
 
           <TouchableOpacity
             style={[styles.registerButton, loading && styles.disabledButton]}
-            activeOpacity={0.85}
+            activeOpacity={0.8}
             onPress={handleRegister}
             disabled={loading}
           >
@@ -268,15 +295,14 @@ export default function RegisterScreen({
 
           <View style={styles.loginRow}>
             <Text style={styles.loginText}>Sudah punya akun?</Text>
-
             <TouchableOpacity activeOpacity={0.8} onPress={onLogin}>
-              <Text style={styles.loginLink}> Masuk</Text>
+              <Text style={styles.loginLink}> Masuk Disini</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </Animated.View>
 
         <Text style={styles.bottomText}>
-          LAPORAN KUH Mobile • Aman dan terpantau
+          LAPORAN KUH Mobile v1.0
         </Text>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -284,173 +310,158 @@ export default function RegisterScreen({
 }
 
 const styles = StyleSheet.create({
-  screen: {
+  keyboard: {
     flex: 1,
-    backgroundColor: "#0f172a",
+    backgroundColor: "#F8FAFC", // Slate 50
   },
-  scrollContent: {
+  container: {
     flexGrow: 1,
-    paddingHorizontal: 22,
-    paddingTop: 58,
-    paddingBottom: 34,
+    paddingHorizontal: 24,
+    paddingTop: 80,
+    paddingBottom: 40,
+    backgroundColor: "#F8FAFC",
   },
-  topSection: {
-    marginBottom: 24,
+  bgBlob: {
+    position: "absolute",
+    top: -150,
+    right: -100,
+    width: 400,
+    height: 400,
+    borderRadius: 200,
+    backgroundColor: "rgba(14, 165, 233, 0.08)", // Sky Blue with low opacity
   },
-  brandRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 30,
+  header: {
+    marginBottom: 40,
   },
   logoBox: {
-    width: 50,
-    height: 50,
-    borderRadius: 16,
-    backgroundColor: "#1e293b",
-    borderWidth: 1,
-    borderColor: "#334155",
+    width: 72,
+    height: 72,
+    borderRadius: 22,
+    backgroundColor: "#0EA5E9",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 12,
+    marginBottom: 20,
+    shadowColor: "#0EA5E9",
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 8,
   },
-  logoText: {
-    color: "#38bdf8",
-    fontSize: 17,
-    fontWeight: "900",
-    letterSpacing: 0.5,
+  badge: {
+    alignSelf: "flex-start",
+    backgroundColor: "#E0F2FE",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    marginBottom: 12,
   },
-  brandName: {
-    color: "#f8fafc",
-    fontSize: 16,
-    fontWeight: "900",
-    letterSpacing: 0.4,
-  },
-  brandCaption: {
-    color: "#64748b",
+  badgeText: {
+    color: "#0284C7",
     fontSize: 12,
     fontWeight: "700",
-    marginTop: 2,
+    letterSpacing: 0.5,
   },
   title: {
-    color: "#f8fafc",
-    fontSize: 30,
+    fontSize: 32,
     fontWeight: "900",
-    letterSpacing: -0.6,
+    color: "#0F172A",
+    letterSpacing: -0.5,
   },
   subtitle: {
-    color: "#94a3b8",
-    fontSize: 14,
-    lineHeight: 22,
-    marginTop: 10,
-    maxWidth: 340,
+    marginTop: 8,
+    fontSize: 15,
+    color: "#64748B",
+    lineHeight: 24,
+    maxWidth: 300,
   },
   card: {
-    backgroundColor: "#111827",
+    backgroundColor: "#FFFFFF",
     borderRadius: 24,
-    padding: 22,
-    borderWidth: 1,
-    borderColor: "#1f2937",
-    shadowColor: "#000000",
-    shadowOpacity: 0.22,
-    shadowRadius: 14,
+    padding: 24,
+    shadowColor: "#94A3B8",
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 10 },
     elevation: 5,
   },
-  formHeader: {
-    marginBottom: 22,
-  },
-  formTitle: {
-    color: "#f8fafc",
-    fontSize: 18,
-    fontWeight: "900",
-  },
-  formSubtitle: {
-    color: "#94a3b8",
-    fontSize: 13,
-    fontWeight: "700",
-    marginTop: 5,
-    lineHeight: 19,
-  },
   inputGroup: {
-    marginBottom: 17,
+    marginBottom: 20,
   },
   label: {
-    color: "#e5e7eb",
-    fontSize: 13,
-    fontWeight: "800",
-    marginBottom: 9,
-  },
-  input: {
-    height: 54,
-    borderRadius: 14,
-    backgroundColor: "#0f172a",
-    borderWidth: 1,
-    borderColor: "#334155",
-    paddingHorizontal: 15,
-    color: "#f8fafc",
+    color: "#334155",
     fontSize: 14,
+    fontWeight: "700",
+    marginBottom: 8,
+    marginLeft: 4,
   },
-  passwordWrapper: {
-    height: 54,
-    borderRadius: 14,
-    backgroundColor: "#0f172a",
-    borderWidth: 1,
-    borderColor: "#334155",
+  inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: 15,
-    paddingRight: 8,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: "#F1F5F9",
+    borderWidth: 1,
+    borderColor: "#E2E8F0",
+    paddingHorizontal: 16,
   },
-  passwordInput: {
+  inputIcon: {
+    marginRight: 10,
+  },
+  input: {
     flex: 1,
+    color: "#0F172A",
+    fontSize: 15,
+    fontWeight: "500",
     height: "100%",
-    color: "#f8fafc",
-    fontSize: 14,
   },
   eyeButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
-    backgroundColor: "#1e293b",
-    alignItems: "center",
-    justifyContent: "center",
+    padding: 8,
   },
   registerButton: {
-    height: 54,
-    borderRadius: 14,
-    backgroundColor: "#2563eb",
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: "#0EA5E9",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 6,
+    marginTop: 10,
+    shadowColor: "#0EA5E9",
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 6,
   },
   disabledButton: {
     opacity: 0.7,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   registerButtonText: {
-    color: "#ffffff",
-    fontSize: 15,
-    fontWeight: "900",
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "800",
+    letterSpacing: 0.5,
   },
   loginRow: {
-    marginTop: 18,
+    marginTop: 24,
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
+    justifyContent: "center",
   },
   loginText: {
-    color: "#94a3b8",
-    fontSize: 13,
-    fontWeight: "700",
+    color: "#64748B",
+    fontSize: 14,
+    fontWeight: "500",
   },
   loginLink: {
-    color: "#38bdf8",
-    fontSize: 13,
-    fontWeight: "900",
+    color: "#0EA5E9",
+    fontSize: 14,
+    fontWeight: "800",
   },
   bottomText: {
-    color: "#64748b",
+    color: "#94A3B8",
     fontSize: 12,
-    fontWeight: "700",
+    fontWeight: "600",
     textAlign: "center",
-    marginTop: 26,
+    marginTop: 40,
   },
 });

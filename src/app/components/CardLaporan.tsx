@@ -21,14 +21,14 @@ export default function CardLaporan({ item, onPress }: CardLaporanProps) {
   const status = item.status || "pending";
 
   return (
-    <TouchableOpacity activeOpacity={0.85} onPress={onPress} style={styles.card}>
+    <TouchableOpacity activeOpacity={0.8} onPress={onPress} style={styles.card}>
       <View style={styles.row}>
         <Text numberOfLines={1} style={styles.title}>
           {title}
         </Text>
 
         <View style={[styles.badge, getBadgeStyle(status)]}>
-          <Text style={styles.badgeText}>{status}</Text>
+          <Text style={[styles.badgeText, getBadgeTextStyle(status)]}>{status}</Text>
         </View>
       </View>
 
@@ -42,19 +42,32 @@ export default function CardLaporan({ item, onPress }: CardLaporanProps) {
 }
 
 const getBadgeStyle = (status: string) => {
-  if (status === "selesai") return { backgroundColor: "rgba(34,197,94,0.18)" };
-  if (status === "proses") return { backgroundColor: "rgba(234,179,8,0.18)" };
-  return { backgroundColor: "rgba(59,130,246,0.18)" };
+  if (status === "selesai") return { backgroundColor: "#F0FDF4", borderColor: "#86EFAC" };
+  if (status === "diproses" || status === "proses") return { backgroundColor: "#FFF7ED", borderColor: "#FDBA74" };
+  if (status === "ditolak") return { backgroundColor: "#FEF2F2", borderColor: "#FECACA" };
+  return { backgroundColor: "#F0F9FF", borderColor: "#BAE6FD" };
+};
+
+const getBadgeTextStyle = (status: string) => {
+  if (status === "selesai") return { color: "#166534" };
+  if (status === "diproses" || status === "proses") return { color: "#9A3412" };
+  if (status === "ditolak") return { color: "#991B1B" };
+  return { color: "#0284C7" };
 };
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "rgba(15, 23, 42, 0.96)",
+    backgroundColor: "#FFFFFF",
     borderWidth: 1,
-    borderColor: "rgba(148, 163, 184, 0.15)",
+    borderColor: "#E2E8F0",
     borderRadius: 22,
-    padding: 16,
+    padding: 18,
     marginBottom: 14,
+    shadowColor: "#94A3B8",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
   },
   row: {
     flexDirection: "row",
@@ -64,30 +77,31 @@ const styles = StyleSheet.create({
   },
   title: {
     flex: 1,
-    color: "#f8fafc",
+    color: "#0F172A",
     fontSize: 16,
-    fontWeight: "900",
+    fontWeight: "800",
   },
   desc: {
-    color: "#94a3b8",
-    fontSize: 13,
-    lineHeight: 20,
-    marginTop: 10,
-  },
-  date: {
-    color: "#64748b",
-    fontSize: 12,
+    color: "#64748B",
+    fontSize: 14,
+    lineHeight: 22,
     marginTop: 12,
   },
+  date: {
+    color: "#94A3B8",
+    fontSize: 12,
+    fontWeight: "600",
+    marginTop: 14,
+  },
   badge: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 999,
+    borderWidth: 1,
   },
   badgeText: {
-    color: "#e2e8f0",
     fontSize: 11,
-    fontWeight: "900",
+    fontWeight: "800",
     textTransform: "capitalize",
   },
 });
